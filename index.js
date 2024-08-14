@@ -243,13 +243,28 @@ function generateHTML(data , submissionId) {
 }
 
 async function generatePDF(htmlContent, filename) {
-    const browser = await puppeteer.launch();
+    let browser;
+
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+        // Use chrome-aws-lambda in production (AWS Lambda environment)
+        const chrome = require('chrome-aws-lambda');
+        browser = await chrome.puppeteer.launch({
+            args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox'],
+            defaultViewport: chrome.defaultViewport,
+            executablePath: await chrome.executablePath,
+        });
+    } else {
+        // Use standard Puppeteer in development
+        browser = await puppeteer.launch();
+    }
+
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     await page.pdf({ path: filename, format: 'A4', printBackground: true });
     await browser.close();
     return filename;
 }
+
 
 
 const Imap = require('imap');

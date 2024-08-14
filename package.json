@@ -6,7 +6,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "prep": "npm install puppeteer nodemailer moment imap express body-parser pdfkit",
+    "prep": "npx puppeteer browsers install chrome",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
