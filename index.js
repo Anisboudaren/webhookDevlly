@@ -242,7 +242,7 @@ function generateHTML(data , submissionId) {
     return html;
 }
 
-const puppeteer = require('puppeteer');
+
 
 async function generatePDF(htmlContent, filename) {
     const browser = await puppeteer.launch({
