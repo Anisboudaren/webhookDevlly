@@ -8,7 +8,7 @@ const moment = require('moment');
 const {dot} = require('./tools')
 const app = express();
 const PORT = 3000;
-
+require('dotenv').config();
 app.use(express.json());
 
 app.get("/home", (req, res) => {
