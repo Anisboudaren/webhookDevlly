@@ -242,28 +242,41 @@ function generateHTML(data , submissionId) {
     return html;
 }
 
-async function generatePDF(htmlContent, filename) {
-    let browser;
+const puppeteer = require('puppeteer');
 
-    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-        // Use chrome-aws-lambda in production (AWS Lambda environment)
-        const chrome = require('chrome-aws-lambda');
-        browser = await chrome.puppeteer.launch({
-            args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox'],
-            defaultViewport: chrome.defaultViewport,
-            executablePath: await chrome.executablePath,
-        });
-    } else {
-        // Use standard Puppeteer in development
-        browser = await puppeteer.launch();
+async function generatePDF(htmlContent, filename) {
+    const browser = await puppeteer.launch({
+        args: [
+          "--disable-setuid-sandbox",
+          "--no-sandbox",
+          "--single-process",
+          "--no-zygote",
+        ],
+        executablePath:
+          process.env.NODE_ENV === "production"
+            ? process.env.PUPPETEER_EXECUTABLE_PATH
+            : puppeteer.executablePath(),
+      });
+
+    try {
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+        await page.pdf({ path: filename, format: 'A4', printBackground: true });
+        console.log(`PDF generated successfully at: ${filename}`);
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    } finally {
+        try {
+            await browser.close();
+            console.log('Browser closed successfully.');
+        } catch (closeError) {
+            console.error('Error closing browser:', closeError);
+        }
     }
 
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-    await page.pdf({ path: filename, format: 'A4', printBackground: true });
-    await browser.close();
     return filename;
 }
+
 
 
 
