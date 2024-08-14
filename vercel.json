@@ -6,9 +6,6 @@
       "use": "@vercel/node"
     }
   ],
-  "hooks": {
-    "postinstall": "npm install puppeteer"
-  },
   "routes": [
     {
       "src": "/(.*)",
