@@ -479,7 +479,7 @@ async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date
                     if (appendErr) {
                         console.error('Error appending email to "Sent" folder:', appendErr);
                     } else {
-                        console.log('Email appended to "Sent" folder.');
+                        console.log('(v2 Email appended to "Sent" folder.');
                     }
                     imap.end();
                 });
