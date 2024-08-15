@@ -226,7 +226,7 @@ function generateHTML(data , submissionId) {
             <tr ${highlightClass}>
                 <td>${item.description}</td>
                 <td>${item.quantity}</td>
-                <td>${typeof item.price === 'number' ? dot(item.price) + " DA" : item.price}</td>
+                <td >${typeof item.price === 'number' ? dot(item.price) + " DA" : item.price}</td>
             </tr>
         `;
     });
@@ -234,7 +234,7 @@ function generateHTML(data , submissionId) {
     <tfoot>
     <tr>
         <td colspan="2">TOTALE</td>
-        <td class="price-column">${totalPrice}</td>
+        <td class="price-column" style="font-size:24px">${totalPrice}</td>
     </tr>
     </tfoot>`;
 
@@ -249,8 +249,11 @@ const pdf = require('html-pdf');
 async function generatePDF(htmlContent, filename) {
     return new Promise((resolve, reject) => {
         pdf.create(htmlContent, {
-            format: 'A4',
-            type: 'pdf' // Specify output type as pdf
+            height: "297mm",
+            width: "210mm",
+            type: 'pdf', // Specify output type as pdf
+            border: '0', // Remove any border/margin
+            timeout: 100000 // Increase timeout to handle larger files
         }).toFile(filename, (err, res) => {
             if (err) {
                 console.error('Error generating PDF:', err);
@@ -261,6 +264,7 @@ async function generatePDF(htmlContent, filename) {
         });
     });
 }
+
 
 
 
