@@ -249,10 +249,13 @@ const pdf = require('html-pdf');
 async function generatePDF(htmlContent, filename) {
     return new Promise((resolve, reject) => {
         pdf.create(htmlContent, {
-            format : "A4",
-            type: 'pdf', // Specify output type as pdf
-            border: '0', // Remove any border/margin
-            timeout: 100000 // Increase timeout to handle larger files
+            format: "A4",
+            type: 'pdf',
+            border: '0',
+            timeout: 100000,
+            quality: '100', // Set the quality of the PDF
+            // Use the zoom option to adjust scale
+            zoom: 1 // Change this value if necessary (1 is normal)
         }).toFile(filename, (err, res) => {
             if (err) {
                 console.error('Error generating PDF:', err);
@@ -263,6 +266,7 @@ async function generatePDF(htmlContent, filename) {
         });
     });
 }
+
 
 
 
