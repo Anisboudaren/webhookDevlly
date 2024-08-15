@@ -244,38 +244,25 @@ function generateHTML(data , submissionId) {
 
 
 
+const pdf = require('html-pdf');
+
 async function generatePDF(htmlContent, filename) {
-    const browser = await puppeteer.launch({
-        args: [
-          "--disable-setuid-sandbox",
-          "--no-sandbox",
-          "--single-process",
-          "--no-zygote",
-        ],
-        executablePath:
-          process.env.NODE_ENV === "production"
-            ? process.env.PUPPETEER_EXECUTABLE_PATH
-            : puppeteer.executablePath(),
-      });
-
-    try {
-        const page = await browser.newPage();
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-        await page.pdf({ path: filename, format: 'A4', printBackground: true });
-        console.log(`PDF generated successfully at: ${filename}`);
-    } catch (error) {
-        console.error('Error generating PDF:', error);
-    } finally {
-        try {
-            await browser.close();
-            console.log('Browser closed successfully.');
-        } catch (closeError) {
-            console.error('Error closing browser:', closeError);
-        }
-    }
-
-    return filename;
+    return new Promise((resolve, reject) => {
+        pdf.create(htmlContent, {
+            format: 'A4',
+            type: 'pdf' // Specify output type as pdf
+        }).toFile(filename, (err, res) => {
+            if (err) {
+                console.error('Error generating PDF:', err);
+                return reject(err);
+            }
+            console.log(`PDF generated successfully at: ${res.filename}`);
+            resolve(res.filename);
+        });
+    });
 }
+
+
 
 
 
@@ -504,3 +491,5 @@ async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date
         console.error('Error sending email:', error);
     }
 }
+
+

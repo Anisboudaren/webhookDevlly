@@ -14,10 +14,11 @@
             background: #e1e1e1;
             width: 100%;
             height: 100%;
+            box-sizing: border-box; /* Include padding in width and height calculations */
         }
         .a4-page {
-            width: 211mm;
-            height: 297mm;
+            width: 230mm;
+            height: 350mm;
             margin: 0mm auto;
             background: url('https://i.imgur.com/LbmGkdr.jpeg') no-repeat center center;
             background-size: cover;
@@ -27,9 +28,16 @@
         }
         .header-info {
             display: flex;
-            direction: row;
-            flex: 50% 50%;
             justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .header-left, .header-right {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .header-right {
+            margin-right: 0;
         }
         /* table styling */
         .table {
@@ -67,9 +75,9 @@
             text-align: left;
             padding-right: 0;
         }
-        .invoice-table td.price-column { /* New class for price column */
-            min-width: 150px; /* Set a minimum width for the price column */
-            text-align: right; /* Align text to the right for better readability */
+        .invoice-table td.price-column {
+            min-width: 150px;
+            text-align: right;
         }
         @media only screen and (max-width: 600px) {
             body {
@@ -91,20 +99,14 @@
 <body>
     <div class="a4-page">
         <div class="header-info">
-            <div>
+            <div class="header-left">
                 Devlly Agency<br>
                 Numéro d'Enregistrement: 24A6136066<br>
                 NIF: 10225010354914402500 <br>
                 Address: Constantine, El Khroub<br>
                 10 Rue Hadjaj Bachir
             </div>
-            <div>
-                {{full name}}<br>                
-                Tel: {{Telephone}}<br>                
-                Email: {{E-mail}}<br>  
-                Numéro de devis: #{{id_devis}}<br>
-                Date de Devis: {{date}} 
-            </div>
+           
         </div>
 
         <div class="table">
