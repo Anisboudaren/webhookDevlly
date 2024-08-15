@@ -7,11 +7,11 @@ const path = require('path');
 const moment = require('moment');
 const {dot} = require('./tools')
 const app = express();
-const PORT = 3000;
-require('dotenv').config();
-app.use(express.json());
+const PORT = 5000;
 
-app.get("/home", (req, res) => {
+app.use(express.json());
+require('dotenv').config();
+app.get("/", (req, res) => {
     res.send("hello");
 });
 
@@ -72,7 +72,7 @@ function generateHTML(data , submissionId) {
             else 
                 tableData.push({ description: "E-commerce Website Development", quantity: 1, price: 120000 });
             break;
-    
+
         case "Site éducatif (LMS)":
             switch(data["devlly_lms_type_courses"]) {
                 case "Présentiel":
@@ -89,19 +89,19 @@ function generateHTML(data , submissionId) {
                     break;
             }
             break;
-    
+
         case "Landing page":
             tableData.push({ description: "Landing Page Development", quantity: 1, price: 10000 });
             break;
-    
+
         case "Portfolio":
             tableData.push({ description: "Portfolio Website Development", quantity: 1, price: 30000 });
             break;
-    
+
         case "Blog":
             tableData.push({ description: "Blog Website Development", quantity: 1, price: 60000 });
             break;
-    
+
         case "Site pour business":
             switch(data["devlly_buisness_type"]) {
                 case "Agence de voyage":
@@ -111,14 +111,14 @@ function generateHTML(data , submissionId) {
                     if (data["devlly_immob_services_types"].includes("Voyages organisées")) travelAgencyPrice += 25000;
                     if (data["devlly_immob_services_types"].includes("Tours")) travelAgencyPrice += 10000;
                     if (data["devlly_immob_services_types"].includes("Traitement Visa")) travelAgencyPrice += 30000;
-    
+
                     tableData.push({
                         description: "Développement de Site pour Agence de voyage",
                         quantity: 1,
                         price: travelAgencyPrice
                     });
                     break;
-    
+
                 case "Agence immobilière":
                     if (data["devlly_immob_type"] === "site web uniquement vitrine") {
                         tableData.push({
@@ -140,7 +140,7 @@ function generateHTML(data , submissionId) {
                         });
                     }
                     break;
-    
+
                 default:
                     tableData.push({
                         description: "Développement de Site pour Business",
@@ -150,16 +150,16 @@ function generateHTML(data , submissionId) {
                     break;
             }
             break;
-    
+
         default:
             tableData.push({ description: "Standard Website Development", quantity: 1, price: 99999 }); 
             break;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     // Define extra services with their prices
     const extraServices = [
         { name: "Payement en ligne par Edahabia/CIB", description: "Payement en ligne par Edahabia/CIB", price: 20000 },
@@ -186,12 +186,12 @@ function generateHTML(data , submissionId) {
         },
         { name: "intégrations spécifiques avec des outils existants", description: "Intégrations spécifiques avec des outils existants", price: 0 }
     ];
-    
+
     // Check and add selected extra services
     if (data["devlly_services_extra"]) {
         let extraServicesNames = [];
         let totalExtraServicesPrice = 0;
-    
+
         data["devlly_services_extra"].forEach(service => {
             const selectedService = extraServices.find(extra => extra.name === service);
             if (selectedService) {
@@ -199,13 +199,13 @@ function generateHTML(data , submissionId) {
                 totalExtraServicesPrice += selectedService.price;
             }
         });
-    
+
         if (extraServicesNames.length > 0) {
             const description = `Extra services (${extraServicesNames.join(', ')})`;
             tableData.push({ description: description, quantity: 1, price: totalExtraServicesPrice });
         }
     }
-    
+
 
 
     // Add other standard services
@@ -226,7 +226,7 @@ function generateHTML(data , submissionId) {
             <tr ${highlightClass}>
                 <td>${item.description}</td>
                 <td>${item.quantity}</td>
-                <td >${typeof item.price === 'number' ? dot(item.price) + " DA" : item.price}</td>
+                <td>${typeof item.price === 'number' ? dot(item.price) + " DA" : item.price}</td>
             </tr>
         `;
     });
@@ -234,7 +234,7 @@ function generateHTML(data , submissionId) {
     <tfoot>
     <tr>
         <td colspan="2">TOTALE</td>
-        <td class="price-column" style="font-size:24px">${totalPrice}</td>
+        <td class="price-column">${totalPrice}</td>
     </tr>
     </tfoot>`;
 
@@ -242,36 +242,26 @@ function generateHTML(data , submissionId) {
     return html;
 }
 
-
-
-const pdf = require('html-pdf');
-
 async function generatePDF(htmlContent, filename) {
-    return new Promise((resolve, reject) => {
-        pdf.create(htmlContent, {
-            format: "A4",
-            type: 'pdf',
-            border: '0',
-            timeout: 100000,
-            quality: '100', // Set the quality of the PDF
-            // Use the zoom option to adjust scale
-            zoom: 1 // Change this value if necessary (1 is normal)
-        }).toFile(filename, (err, res) => {
-            if (err) {
-                console.error('Error generating PDF:', err);
-                return reject(err);
-            }
-            console.log(`PDF generated successfully at: ${res.filename}`);
-            resolve(res.filename);
-        });
-    });
+    const browser = await puppeteer.launch({
+        args: [
+          "--disable-setuid-sandbox",
+          "--no-sandbox",
+          "--single-process",
+          "--no-zygote",
+        ],
+        executablePath:
+          process.env.NODE_ENV === "production"
+            ? process.env.PUPPETEER_EXECUTABLE_PATH
+            : puppeteer.executablePath(),
+      });
+      
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' , timeout: 60000 });
+    await page.pdf({ path: filename, format: 'A4', printBackground: true });
+    await browser.close();
+    return filename;
 }
-
-
-
-
-
-
 
 
 const Imap = require('imap');
@@ -482,7 +472,7 @@ async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date
                     if (appendErr) {
                         console.error('Error appending email to "Sent" folder:', appendErr);
                     } else {
-                        console.log('(v2 Email appended to "Sent" folder.');
+                        console.log('Email appended to "Sent" folder.');
                     }
                     imap.end();
                 });
@@ -498,5 +488,3 @@ async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date
         console.error('Error sending email:', error);
     }
 }
-
-
