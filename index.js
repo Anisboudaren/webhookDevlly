@@ -249,8 +249,7 @@ const pdf = require('html-pdf');
 async function generatePDF(htmlContent, filename) {
     return new Promise((resolve, reject) => {
         pdf.create(htmlContent, {
-            height: "297mm",
-            width: "210mm",
+            format : "A4",
             type: 'pdf', // Specify output type as pdf
             border: '0', // Remove any border/margin
             timeout: 100000 // Increase timeout to handle larger files
