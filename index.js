@@ -243,21 +243,18 @@ function generateHTML(data , submissionId) {
 }
 
 async function generatePDF(htmlContent, filename) {
-    const browser = await puppeteer.launch({
-        args: [
-          "--disable-setuid-sandbox",
-          "--no-sandbox",
-          "--single-process",
-          "--no-zygote",
-        ],
-        executablePath:
-          process.env.NODE_ENV === "production"
-            ? process.env.PUPPETEER_EXECUTABLE_PATH
-            : puppeteer.executablePath(),
-      });
-      
+   const browser = await puppeteer.launch({
+    headless: true, 
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ]
+    });
+    
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' , timeout: 60000 });
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     await page.pdf({ path: filename, format: 'A4', printBackground: true });
     await browser.close();
     return filename;
