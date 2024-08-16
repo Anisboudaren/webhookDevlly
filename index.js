@@ -48,7 +48,37 @@ app.post('/webhook', async (req, res) => {
     console.log(req.body);
     res.status(200).send({ status: 'success' });
 });
+app.post('/webhook-ar', async (req, res) => {
+    const UserInputs = Object.entries(req.body).filter(([key, value]) => key.startsWith('devlly'));
+    const data = Object.fromEntries(UserInputs);
+    const submissionId = req.body.__submission.id; // Use the submission ID from the request
 
+    // Check if the email for this submission ID has already been sent
+    if (sentEmails.has(submissionId)) {
+        return res.status(400).send({ status: 'error', message: 'Email has already been sent for this submission ID.' });
+    }
+
+    // Generate HTML content based on user inputs
+    const htmlContent = generateHTML_ar(req.body, submissionId);
+
+    // Generate PDF from HTML content
+    const pdfPath = await generatePDF(htmlContent, 'invoice.pdf');
+
+    // Check if devlly_isMeet is set and adjust email content accordingly
+    const emailTemplate = data['devlly_isMeet'] ? 'Votre réservation de réunion est confirmée : Rejoignez-nous via le lien Meet' : 'Urgent: Votre devis est prêt, venez le consulter dès maintenant!';
+    const emailText = data['devlly_isMeet']
+        ? 'Please find attached your invoice. You can join the Google Meet using the link provided.'
+        : 'Please find attached your invoice.';
+
+    // Send the email
+    await sendEmail(data['devlly_email'], emailTemplate, emailText, pdfPath, data['devlly_isMeet'], submissionId , data['devlly_meet_date']);
+
+    // Add the unique ID to the sentEmails set
+    sentEmails.add(submissionId);
+
+    console.log(req.body);
+    res.status(200).send({ status: 'success' });
+});
 app.listen(PORT, () => {
     console.log(`Server is running at port ${PORT}`);
 });
@@ -168,11 +198,18 @@ function generateHTML(data , submissionId) {
 
     // Define extra services with their prices
     const extraServices = [
-        { name: "Payement en ligne par Edahabia/CIB", description: "Edahabia/CIB", price: 20000 },
+        { name: "Payement en ligne par Edahabia/CIB ( 20.000 DA)", description: "Edahabia/CIB", price: 20000 },
         { name: "Payement en ligne par Visa/ MasterCard /PayPal (30,000 DA)", description: "Visa/MasterCard/PayPal", price: 30000 },
-        { name: "Multilingue (5,000 DA per langue)", description: "Site multilingue", price: 5000 },
+        { name: "Multilingue (5,000 DA per langue)", 
+          description: data["devlly_services_extra_languages"] && data["devlly_services_extra_languages"].length > 0
+              ? `Site multilingue (${data["devlly_services_extra_languages"].length} langues)`
+              : "Site multilingue (Aucune langue spécifiée)", 
+          price: data["devlly_services_extra_languages"] && data["devlly_services_extra_languages"].length > 0
+              ? 5000 * data["devlly_services_extra_languages"].length
+              : 0 
+        },
         { name: "blog (15,000 DA)", description: "Intégration d'un blog", price: 15000 },
-        { name: "optimisation SEO (20,000 DA)", description: "SEO avancée", price: 20000 },
+        { name: "optimisation SEO avancée (20,000 DA)", description: "SEO avancée", price: 20000 },
         { name: "Intégration des sociétés de livraison (8,000 DA per société )", description: "Intégration de livraison", price: 8000 },
         {
             name: "Intégration pixel (3,000 DA per platform)",
@@ -190,7 +227,204 @@ function generateHTML(data , submissionId) {
                 ? 2000 * data["devlly_landingpage_num_1"]
                 : 2000
         },
-        { name: "intégrations spécifiques avec des outils existants (pour négocier)", description: "Intégrations de outils existants", price: 0 }
+        { name: "intégrations spécifiques avec des outils existants ( pour négocier)", description: "Intégrations de outils existants", price: 0 }
+    ];
+    
+    // Check and add selected extra services
+    if (data["devlly_services_extra"]) {
+        let extraServicesNames = [];
+        let totalExtraServicesPrice = 0;
+    
+        data["devlly_services_extra"].forEach(service => {
+            const selectedService = extraServices.find(extra => extra.name === service);
+    
+            if (selectedService) {
+                // Add the selected service's name to the list
+                extraServicesNames.push(selectedService.description);
+                // Add the selected service's price to the total
+                totalExtraServicesPrice += selectedService.price;
+            }
+        });
+    
+        if (extraServicesNames.length > 0) {
+            const description = `Services supplémentaires (${extraServicesNames.join(', ')})`;
+            tableData.push({ description: description, quantity: 1, price: totalExtraServicesPrice });
+        }
+    }
+    
+
+
+    // Add other standard services
+    tableData.push({ description: "Optimisation SEO basic", quantity: 1, price: "Gratuite" });
+    tableData.push({ description: "Maintenance et Support (1 an)", quantity: 1, price: "Gratuite" });
+    tableData.push({ description: "Hébergement et Nom de Domaine (1 an)", quantity: 1, price: "Gratuite" });
+
+    // Calculate the total price (only sum numeric values)
+    let totalPrice = tableData.reduce((total, item) => {
+        return typeof item.price === 'number' ? total + item.price : total;
+    }, 0);
+    totalPrice = dot(totalPrice) + " DA";
+
+    let dataTable = "<tbody>";
+    tableData.forEach((item, index) => {
+        const highlightClass = (index % 2 === 1) ? "class='highlight'" : "";
+        dataTable += `
+            <tr ${highlightClass}>
+                <td>${item.description}</td>
+                <td>${item.quantity}</td>
+                <td>${typeof item.price === 'number' ? dot(item.price) + " DA" : item.price}</td>
+            </tr>
+        `;
+    });
+    dataTable += `</tbody>
+    <tfoot>
+    <tr>
+        <td colspan="2">TOTALE</td>
+        <td class="price-column">${totalPrice}</td>
+    </tr>
+    </tfoot>`;
+
+    html = html.replace('{{datatable}}', dataTable);
+    return html;
+}
+function generateHTML_ar(data , submissionId) {
+    console.log(data)
+    let html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+    html = html.replace('{{full name}}', data['devlly_fullname']);
+    html = html.replace('{{E-mail}}', data['devlly_email']);
+    html = html.replace('{{Telephone}}', data['devlly_phone']);
+    html = html.replace('{{date}}', moment().format('DD-MM-YYYY'));
+    html = html.replace('{{id_devis}}', submissionId);
+    let tableData = [];
+
+    switch(data['devlly_website_type']) {
+        case "التجارة الإلكترونية":
+            if(data["devlly_isGros"] === "البيع بالجملة")
+                tableData.push({ description: "E-commerce Website Development", quantity: 1, price: 100000 });
+            else if(data["devlly_isGros"] === "البيع بالتجزئة")
+                tableData.push({ description: "E-commerce Website Development", quantity: 1, price: 60000 });
+            else 
+                tableData.push({ description: "E-commerce Website Development", quantity: 1, price: 120000 });
+            break;
+
+        case "الموقع التعليمي (LMS)":
+            switch(data["devlly_lms_type_courses"]) {
+                case "حضوري":
+                    tableData.push({ description: "Développement de Site Éducatif (LMS) - Présentiel", quantity: 1, price: 50000 });
+                    break;
+                case "عبر الإنترنت":
+                    tableData.push({ description: "Développement de Site Éducatif (LMS) - En ligne", quantity: 1, price: 160000 });
+                    break;
+                case "كلاهما":
+                    tableData.push({ description: "Développement de Site Éducatif (LMS) - Présentiel + En ligne", quantity: 1, price: 200000 });
+                    break;
+                default:
+                    tableData.push({ description: "Développement de Site Éducatif (LMS)", quantity: 1, price: 100000 });
+                    break;
+            }
+            break;
+
+        case "صفحة هبوط":
+            tableData.push({ description: "Landing Page Development", quantity: 1, price: 10000 });
+            break;
+
+        case "Portfolio":
+            tableData.push({ description: "Portfolio Website Development", quantity: 1, price: 30000 });
+            break;
+
+        case "مدونة":
+            tableData.push({ description: "Blog Website Development", quantity: 1, price: 60000 });
+            break;
+
+        case "موقع لمشروع":
+                switch(data["devlly_buisness_type"]) {
+                    case "وكالة سفر":
+                        let travelAgencyPrice = 0;
+                        switch (data["devlly_voyage_systeme_res"]) {
+                            case "Système de commande simple: Le client remplit manuellement les informations de contact et de réservation, et reçoit le devis manuel.":
+                                travelAgencyPrice = 80000;
+                                break;
+                            case "Système de prix dynamique : Les prix sont affichés dynamiquement en fonction du nombre de personnes et des dates. La réservation se fait manuellement, mais le devis est généré":
+                                travelAgencyPrice = 120000;
+                                break;
+                            default:
+                                travelAgencyPrice = 0; // Default value if the system is not specified
+                        }
+            
+                        tableData.push({
+                            description: "Développement de Site pour Agence de voyage",
+                            quantity: 1,
+                            price: travelAgencyPrice
+                        });
+                        break;
+            
+                    case "وكالة عقارية":
+                        if (data["devlly_immob_type"] === "موقع إلكتروني عرضي فقط") {
+                            tableData.push({
+                                description: "Développement de Site pour Agence immobilière (Vitrine)",
+                                quantity: 1,
+                                price: 80000
+                            });
+                        } else if (data["devlly_immob_type"] === "مع نظام إدارة عقارية") {
+                            tableData.push({
+                                description: "Développement de Site pour Agence immobilière (Système de gestion)",
+                                quantity: 1,
+                                price: 180000
+                            });
+                        } else {
+                            tableData.push({
+                                description: "Développement de Site pour Agence immobilière",
+                                quantity: 1,
+                                price: 50000
+                            });
+                        }
+                        break;
+            
+                    default:
+                        tableData.push({
+                            description: "Développement de Site pour Business",
+                            quantity: 1,
+                            price: 80000
+                        });
+                        break;
+                }
+                break;
+            
+            default:
+                 
+                break;
+            
+    }
+
+
+
+
+
+    // Define extra services with their prices
+    const extraServices = [
+        { name: "الدفع عبر الإنترنت بواسطة Edahabia/CIB (20,000 دج)", description: "Edahabia/CIB", price: 20000 },
+        { name: "الدفع عبر الإنترنت بواسطة فيزا/ماستركارد/بايبال (30,000 دج)", description: "Visa/MasterCard/PayPal", price: 30000 },
+        { name: "متعدد اللغات (5,000 دج لكل لغة)", description: "Site multilingue", price: 5000 },
+        { name: "مدونة (15,000 دج)", description: "Intégration d'un blog", price: 15000 },
+        { name: "تحسين SEO متقدم (20,000 دج)", description: "SEO avancée", price: 20000 },
+        { name: "إدماج شركات التوصيل (8000 دج لكل شركة)", description: "Intégration de livraison", price: 8000 },
+        {
+            name: "إدماج بكسل (3,000 دج لكل منصة)",
+            description: data["devlly_pixel"] && data["devlly_pixel"].length > 0 
+                ? `Intégration de pixels ${data["devlly_pixel"].join(', ')}` 
+                : "Intégration de pixels (Aucune plateforme spécifiée)",
+            price: data["devlly_pixel"] && data["devlly_pixel"].length > 0 
+                ? 3000 * data["devlly_pixel"].length 
+                : 3000
+        },
+        {
+            name: "تصميم صفحات الهبوط (2,000 دج لكل صفحة هبوط)",
+            description: `Design des landing pages (${data["devlly_landingpage_num_1"] || 1})`,
+            price: data["devlly_landingpage_num_1"] 
+                ? 2000 * data["devlly_landingpage_num_1"]
+                : 2000
+        },
+        { name: "تكاملات محددة مع الأدوات الموجودة (للتفاوض)", description: "Intégrations de outils existants", price: 0 }
     ];
 
     // Check and add selected extra services
@@ -249,15 +483,7 @@ function generateHTML(data , submissionId) {
 }
 
 async function generatePDF(htmlContent, filename) {
-   const browser = await puppeteer.launch({
-    headless: true, 
-      args: [
-        "--disable-setuid-sandbox",
-        "--no-sandbox",
-        "--single-process",
-        "--no-zygote",
-      ]
-    });
+   const browser = await puppeteer.launch();
     
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
