@@ -483,7 +483,16 @@ function generateHTML_ar(data , submissionId) {
 }
 
 async function generatePDF(htmlContent, filename) {
-   const browser = await puppeteer.launch();
+   const browser = await puppeteer.launch({
+    headless: true, 
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ]
+    }
+);
     
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
