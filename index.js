@@ -76,16 +76,16 @@ function generateHTML(data , submissionId) {
         case "Site éducatif (LMS)":
             switch(data["devlly_lms_type_courses"]) {
                 case "Présentiel":
-                    tableData.push({ description: "Développement de Site Éducatif (LMS) - Présentiel", quantity: 1, price: 80000 });
+                    tableData.push({ description: "Développement de Site Éducatif (LMS) - Présentiel", quantity: 1, price: 50000 });
                     break;
                 case "En ligne":
-                    tableData.push({ description: "Développement de Site Éducatif (LMS) - En ligne", quantity: 1, price: 50000 });
+                    tableData.push({ description: "Développement de Site Éducatif (LMS) - En ligne", quantity: 1, price: 160000 });
                     break;
                 case "Les deux":
-                    tableData.push({ description: "Développement de Site Éducatif (LMS) - Présentiel + En ligne", quantity: 1, price: 70000 });
+                    tableData.push({ description: "Développement de Site Éducatif (LMS) - Présentiel + En ligne", quantity: 1, price: 200000 });
                     break;
                 default:
-                    tableData.push({ description: "Développement de Site Éducatif (LMS)", quantity: 1, price: 60000 });
+                    tableData.push({ description: "Développement de Site Éducatif (LMS)", quantity: 1, price: 100000 });
                     break;
             }
             break;
@@ -103,57 +103,63 @@ function generateHTML(data , submissionId) {
             break;
 
         case "Site pour business":
-            switch(data["devlly_buisness_type"]) {
-                case "Agence de voyage":
-                    let travelAgencyPrice = 0;
-                    if (data["devlly_immob_services_types"].includes("Hôtels")) travelAgencyPrice += 15000;
-                    if (data["devlly_immob_services_types"].includes("Billets d'avions")) travelAgencyPrice += 20000;
-                    if (data["devlly_immob_services_types"].includes("Voyages organisées")) travelAgencyPrice += 25000;
-                    if (data["devlly_immob_services_types"].includes("Tours")) travelAgencyPrice += 10000;
-                    if (data["devlly_immob_services_types"].includes("Traitement Visa")) travelAgencyPrice += 30000;
-
-                    tableData.push({
-                        description: "Développement de Site pour Agence de voyage",
-                        quantity: 1,
-                        price: travelAgencyPrice
-                    });
-                    break;
-
-                case "Agence immobilière":
-                    if (data["devlly_immob_type"] === "site web uniquement vitrine") {
+                switch(data["devlly_buisness_type"]) {
+                    case "Agence de voyage":
+                        let travelAgencyPrice = 0;
+                        switch (data["devlly_voyage_systeme_res"]) {
+                            case "Système de commande simple: Le client remplit manuellement les informations de contact et de réservation, et reçoit le devis manuel.":
+                                travelAgencyPrice = 80000;
+                                break;
+                            case "Système de prix dynamique : Les prix sont affichés dynamiquement en fonction du nombre de personnes et des dates. La réservation se fait manuellement, mais le devis est généré":
+                                travelAgencyPrice = 120000;
+                                break;
+                            default:
+                                travelAgencyPrice = 0; // Default value if the system is not specified
+                        }
+            
                         tableData.push({
-                            description: "Développement de Site pour Agence immobilière (Vitrine)",
+                            description: "Développement de Site pour Agence de voyage",
+                            quantity: 1,
+                            price: travelAgencyPrice
+                        });
+                        break;
+            
+                    case "Agence immobilière":
+                        if (data["devlly_immob_type"] === "site web uniquement vitrine") {
+                            tableData.push({
+                                description: "Développement de Site pour Agence immobilière (Vitrine)",
+                                quantity: 1,
+                                price: 80000
+                            });
+                        } else if (data["devlly_immob_type"] === "Avec un système de gestion immobilière") {
+                            tableData.push({
+                                description: "Développement de Site pour Agence immobilière (Système de gestion)",
+                                quantity: 1,
+                                price: 180000
+                            });
+                        } else {
+                            tableData.push({
+                                description: "Développement de Site pour Agence immobilière",
+                                quantity: 1,
+                                price: 50000
+                            });
+                        }
+                        break;
+            
+                    default:
+                        tableData.push({
+                            description: "Développement de Site pour Business",
                             quantity: 1,
                             price: 80000
                         });
-                    } else if (data["devlly_immob_type"] === "Avec un système de gestion immobilière") {
-                        tableData.push({
-                            description: "Développement de Site pour Agence immobilière (Système de gestion)",
-                            quantity: 1,
-                            price: 180000
-                        });
-                    } else {
-                        tableData.push({
-                            description: "Développement de Site pour Agence immobilière",
-                            quantity: 1,
-                            price: 50000
-                        });
-                    }
-                    break;
-
-                default:
-                    tableData.push({
-                        description: "Développement de Site pour Business",
-                        quantity: 1,
-                        price: 40000
-                    });
-                    break;
-            }
-            break;
-
-        default:
-            tableData.push({ description: "Standard Website Development", quantity: 1, price: 99999 }); 
-            break;
+                        break;
+                }
+                break;
+            
+            default:
+                 
+                break;
+            
     }
 
 
@@ -162,14 +168,14 @@ function generateHTML(data , submissionId) {
 
     // Define extra services with their prices
     const extraServices = [
-        { name: "Payement en ligne par Edahabia/CIB", description: "Payement en ligne par Edahabia/CIB", price: 20000 },
-        { name: "Payement en ligne par Visa/ MasterCard /PayPal", description: "Payement en ligne par Visa/MasterCard/PayPal", price: 30000 },
-        { name: "Multilingue", description: "Site multilingue", price: 5000 },
-        { name: "blog", description: "Intégration d'un blog", price: 15000 },
-        { name: "optimisation SEO avancé", description: "Optimisation SEO avancée", price: 20000 },
-        { name: "Intégration des sociétés de livraison", description: "Intégration des sociétés de livraison", price: 8000 },
+        { name: "Payement en ligne par Edahabia/CIB", description: "Edahabia/CIB", price: 20000 },
+        { name: "Payement en ligne par Visa/ MasterCard /PayPal (30,000 DA)", description: "Visa/MasterCard/PayPal", price: 30000 },
+        { name: "Multilingue (5,000 DA per langue)", description: "Site multilingue", price: 5000 },
+        { name: "blog (15,000 DA)", description: "Intégration d'un blog", price: 15000 },
+        { name: "optimisation SEO (20,000 DA)", description: "SEO avancée", price: 20000 },
+        { name: "Intégration des sociétés de livraison (8,000 DA per société )", description: "Intégration de livraison", price: 8000 },
         {
-            name: "Intégration pixel",
+            name: "Intégration pixel (3,000 DA per platform)",
             description: data["devlly_pixel"] && data["devlly_pixel"].length > 0 
                 ? `Intégration de pixels ${data["devlly_pixel"].join(', ')}` 
                 : "Intégration de pixels (Aucune plateforme spécifiée)",
@@ -178,13 +184,13 @@ function generateHTML(data , submissionId) {
                 : 3000
         },
         {
-            name: "Design des landing pages",
+            name: "Design des landing pages (2,000 DA per landing page)",
             description: `Design des landing pages (${data["devlly_landingpage_num_1"] || 1})`,
             price: data["devlly_landingpage_num_1"] 
                 ? 2000 * data["devlly_landingpage_num_1"]
                 : 2000
         },
-        { name: "intégrations spécifiques avec des outils existants", description: "Intégrations spécifiques avec des outils existants", price: 0 }
+        { name: "intégrations spécifiques avec des outils existants (pour négocier)", description: "Intégrations de outils existants", price: 0 }
     ];
 
     // Check and add selected extra services
@@ -195,7 +201,7 @@ function generateHTML(data , submissionId) {
         data["devlly_services_extra"].forEach(service => {
             const selectedService = extraServices.find(extra => extra.name === service);
             if (selectedService) {
-                extraServicesNames.push(selectedService.name);
+                extraServicesNames.push(selectedService.description);
                 totalExtraServicesPrice += selectedService.price;
             }
         });
@@ -265,165 +271,267 @@ const Imap = require('imap');
 const { simpleParser } = require('mailparser');
 
 // Email configuration
-const senderEmail = 'contact@devlly.net'; // Your Titan email address
+const senderEmail = 'noreply@devlly.net'; // Your Titan email address
 const senderPassword = 'Devlly00@'; // Your Titan password
 
-async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date) {
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.titan.email',
-        port: 587, // Use 465 for SSL if you want to set secure: true
-        secure: false, // Set to true if using port 465
-        auth: {
-            user: senderEmail,
-            pass: senderPassword,
-        },
-    });
+    async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date) {
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.titan.email',
+            port: 587, // Use 465 for SSL if you want to set secure: true
+            secure: false, // Set to true if using port 465
+            auth: {
+                user: senderEmail,
+                pass: senderPassword,
+            },
+        });
 
-    let mailOptions;
-    console.log("ismeet = ", isMeet);
-    if (isMeet === 'OK') {
-        // Schedule the meeting for the next day at 4 PM
-        const meetingDate = moment(date, 'YYYY-MM-DD');
+        let mailOptions;
+        console.log("ismeet = ", isMeet);
+        if (isMeet === 'OK') {
+            // Schedule the meeting for the next day at 4 PM
+            const meetingDate = moment(date, 'YYYY-MM-DD');
 
-        mailOptions = {
-            from: senderEmail,
-            to: to,
-            subject: subject,
-            html: `
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        line-height: 1.6;
-                        color: #333;
-                        background-color: #ddd;
-                    }
-                    .container {
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 20px;
-                        border: 1px solid #ddd;
-                        border-radius: 10px;
-                        background-color: #f9f9f9;
-                    }
-                    h1 {
-                        color: #16217C;
-                    }
-                    .logo {
-                        text-align: center;
-                        margin-bottom: 20px;
-                    }
-                    .logo img {
-                        max-width: 150px;
-                    }
-                    .button {
-                        display: inline-block;
-                        padding: 10px 20px;
-                        font-size: 16px;
-                        color: white;
-                        background-color: #16217C;
-                        border-radius: 5px;
-                        text-decoration: none;
-                        margin-top: 20px;
-                    }
-                    .button:hover {
-                        background-color: #0056b3;
-                        color: white;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="logo">
-                        <img src="https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" width="150">
+            mailOptions = {
+                from: '"Devlly Agency" <' + senderEmail + '>',
+                to: to,
+                subject: subject,
+                html: `
+                <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            line-height: 1.6;
+                            color: #333;
+                            background-color: #ddd;
+                        }
+                        .container {
+                            max-width: 600px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            border: 1px solid #ddd;
+                            border-radius: 10px;
+                            background-color: #f9f9f9;
+                        }
+                        h1 {
+                            color: #16217C;
+                        }
+                        .logo {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .logo img {
+                            max-width: 150px;
+                        }
+                        .button {
+                            display: inline-block;
+                            padding: 10px 20px;
+                            font-size: 16px;
+                            color: white;
+                            background-color: #16217C;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            margin-top: 20px;
+                        }
+                        .button:hover {
+                            background-color: #0056b3;
+                            color: white;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="logo">
+                            <img src="https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" width="150">
+                        </div>
+                        <h1>Your vision, our Code!</h1>
+                        <p>Bonjour,</p>
+                        <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
+                        <p>Nous avons également prévu une réunion pour discuter davantage de vos besoins. Rejoignez la réunion en utilisant le lien ci-dessous :</p>
+                        <p><strong>Date et Heure:</strong> ${meetingDate.format('DD-MM-YYYY à HH:mm')}</p>
+                        <a href="https://meet.google.com/uit-bvdy-zya" class="button">Rejoindre la réunion</a>
+                        <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
+                        <p>Cordialement,<br>L'équipe Devlly Agency</p>
                     </div>
-                    <h1>Your vision, our Code!</h1>
-                    <p>Bonjour,</p>
-                    <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
-                    <p>Nous avons également prévu une réunion pour discuter davantage de vos besoins. Rejoignez la réunion en utilisant le lien ci-dessous :</p>
-                    <p><strong>Date et Heure:</strong> ${meetingDate.format('DD-MM-YYYY à HH:mm')}</p>
-                    <a href="https://meet.google.com/uit-bvdy-zya" class="button">Rejoindre la réunion</a>
-                    <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
-                    <p>Cordialement,<br>L'équipe Devlly Agency</p>
-                </div>
-            </body>
-            </html>
-            `,
-        };
+                </body>
+                </html>
+                `,
+            };
         console.log("we sent a meeting email");
     } else {
         const paymentLink = `https://devlly.net/?fluent-form=4&submission_id=${submissionId}&email=${encodeURIComponent(to)}`;
 
         mailOptions = {
-            from: senderEmail,
+            from: '"Devlly Agency" <' + senderEmail + '>',
             to: to,
             subject: subject,
             html: `
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        line-height: 1.6;
-                        color: #333;
-                        background-color: #ddd;
-                    }
-                    .container {
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 20px;
-                        border: 1px solid #ddd;
-                        border-radius: 10px;
-                        background-color: #f9f9f9;
-                    }
-                    h1 {
-                        color: #16217C;
-                    }
-                    .logo {
-                        text-align: center;
-                        margin-bottom: 20px;
-                    }
-                    .logo img {
-                        max-width: 150px;
-                    }
-                    .button {
-                        display: inline-block;
-                        padding: 10px 20px;
-                        font-size: 16px;
-                        color: white;
-                        background-color: #16217C;
-                        border-radius: 5px;
-                        text-decoration: none;
-                        margin-top: 20px;
-                    }
-                    .button:hover {
-                        background-color: #0056b3;
-                        color: white;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="logo">
-                        <img src="https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" width="150">
-                    </div>
-                    <h1>Your vision, our Code!</h1>
-                    <p>Bonjour,</p>
-                    <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
-                    <p>Pour faciliter le processus, nous avons également inclus un lien où vous pouvez procéder au paiement directement si vous acceptez notre offre et les détails du contrat :</p>
-                    <a href="${paymentLink}" class="button">Procéder au paiement</a>
-                    <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
-                    <p>Cordialement,<br>L'équipe Devlly Agency</p>
-                </div>
-            </body>
-            </html>
+    <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #ddd;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #16217C;
+            font-size: 24px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 200px;
+            max-width: 100%;
+            height: auto;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #16217C;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            color: #555;
+            background-color: #f8f9fa;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .social-icons {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            text-align:center;
+            flex-wrap: wrap;
+        }
+        .social-icons a {
+            display: inline-block;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .social-icons img {
+            display: block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            /* background-color: #16217C; */
+        }
+        .contact-info {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .contact-info a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        .unsubscribe {
+            font-size: 10px;
+        }
+        .unsubscribe a {
+            text-decoration: none;
+            color: #dc3545;
+        }
+        .unsubscribe a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .social-icons img {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="https://devlly.net">
+        <div class="logo">
+            <img src="https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo">
+        </div>
+        </a>
+        <h1>Your vision, our Code!</h1>
+        <p>Bonjour,</p>
+        <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
+        <p>Pour faciliter le processus, nous avons également inclus un lien où vous pouvez procéder au paiement directement si vous acceptez notre offre et les détails du contrat :</p>
+        <a href="${paymentLink}" class="button">Procéder au paiement</a>
+        <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
+        <p>Cordialement,<br>L'équipe Devlly Agency</p>
+        
+        <div class="footer">
+            <div class="social-icons">
+                <a href="tel:0540323994" title="Call us">
+                    <img src="https://i.imgur.com/bTVhW9f.png" alt="Call us">
+                </a>
+                <a href="https://x.com/devlly__" target="_blank" title="Twitter">
+                    <img src="https://i.imgur.com/YJkxjBP.png" alt="Twitter">
+                </a>
+                <a href="https://www.facebook.com/devlly__" target="_blank" title="Facebook">
+                    <img src="https://i.imgur.com/1AaVjBs.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/devlly__/" target="_blank" title="Instagram">
+                    <img src="https://i.imgur.com/ZaKpWTs.png" alt="Instagram">
+                </a>
+                 <a href="https://www.linkedin.com/company/devlly/" target="_blank" title="Instagram">
+                    <img src="https://i.imgur.com/6I6Iu4D.png" alt="Instagram">
+                </a>
+            </div>
+            <div class="contact-info">
+                <a href="mailto:contact@devlly.net" style="color: #16217C;" title="Email us">
+                    contact@devlly.net
+                </a>
+            </div>
+            <div class="unsubscribe">
+                <a href="#" class="">Se désinscrire</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
             `,
             attachments: [
                 {
