@@ -144,7 +144,7 @@ function generateHTML(data , submissionId) {
                                 travelAgencyPrice = 120000;
                                 break;
                             default:
-                                travelAgencyPrice = 0; // Default value if the system is not specified
+                                travelAgencyPrice = 120000; // Default value if the system is not specified
                         }
             
                         tableData.push({
@@ -341,14 +341,14 @@ function generateHTML_ar(data , submissionId) {
                     case "وكالة سفر":
                         let travelAgencyPrice = 0;
                         switch (data["devlly_voyage_systeme_res"]) {
-                            case "Système de commande simple: Le client remplit manuellement les informations de contact et de réservation, et reçoit le devis manuel.":
+                            case "نظام طلب بسيط: يملأ العميل يدويًا معلومات الاتصال والحجز، ويتلقى عرض الأسعار يدويًا.":
                                 travelAgencyPrice = 80000;
                                 break;
-                            case "Système de prix dynamique : Les prix sont affichés dynamiquement en fonction du nombre de personnes et des dates. La réservation se fait manuellement, mais le devis est généré":
+                            case "نظام تسعير ديناميكي: تُعرض الأسعار بشكل ديناميكي بناءً على عدد الأشخاص والتواريخ. يتم إجراء الحجز يدويًا، ولكن يتم توليد عرض الأسعار تلقائيًا.":
                                 travelAgencyPrice = 120000;
                                 break;
                             default:
-                                travelAgencyPrice = 0; // Default value if the system is not specified
+                                travelAgencyPrice = 120001; // Default value if the system is not specified
                         }
             
                         tableData.push({
