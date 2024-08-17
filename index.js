@@ -524,7 +524,7 @@ const senderPassword = 'Devlly00@'; // Your Titan password
         console.log("ismeet = ", isMeet);
         if (isMeet === "OK" || isMeet==="تمام") {
             // Schedule the meeting for the next day at 4 PM
-            const meetingDate = moment(date, 'YYYY-MM-DD');
+            const meetingDate = date;
 
             mailOptions = {
                 from: '"Devlly Agency" <' + senderEmail + '>',
@@ -560,7 +560,7 @@ const senderPassword = 'Devlly00@'; // Your Titan password
                     <p>Bonjour,</p>
                         <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
                         <p>Nous avons également prévu une réunion pour discuter davantage de vos besoins. Rejoignez la réunion en utilisant le lien ci-dessous :</p>
-                        <p><strong>Date et Heure:</strong> ${meetingDate.format('DD-MM-YYYY à HH:mm')}</p>
+                        <p><strong>Date et Heure:</strong> ${meetingDate}</p>
                         <a href='https://meet.google.com/uit-bvdy-zya' class="m_-5387884785609020660button"
                         style="display:block;width:100%;padding:10px 20px;font-size:16px;color:white;background-color:#16217c;border-radius:20px;text-decoration:none;margin-top:20px;text-align:center;box-sizing:border-box">Rejoindre la réunion</a>
                         <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
