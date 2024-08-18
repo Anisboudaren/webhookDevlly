@@ -287,6 +287,7 @@ function generateHTML(data , submissionId) {
     html = html.replace('{{datatable}}', dataTable);
     return html;
 }
+
 function generateHTML_ar(data , submissionId) {
     console.log(data)
     let html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
@@ -501,239 +502,238 @@ async function generatePDF(htmlContent, filename) {
     return filename;
 }
 
-
 const Imap = require('imap');
-const { simpleParser } = require('mailparser');
+const senderEmail = 'noreply@devlly.net'; 
+const senderPassword = 'Devlly00@'; 
 
-// Email configuration
-const senderEmail = 'noreply@devlly.net'; // Your Titan email address
-const senderPassword = 'Devlly00@'; // Your Titan password
-
-    async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId , date) {
-        let transporter = nodemailer.createTransport({
-            host: 'smtp.titan.email',
-            port: 587, // Use 465 for SSL if you want to set secure: true
-            secure: false, // Set to true if using port 465
-            auth: {
-                user: senderEmail,
-                pass: senderPassword,
-            },
-        });
-
-        let mailOptions;
-        console.log("ismeet = ", isMeet);
-        if (isMeet === "OK" || isMeet==="تمام") {
-            // Schedule the meeting for the next day at 4 PM
-            const meetingDate = date;
-
-            mailOptions = {
-                from: '"Devlly Agency" <' + senderEmail + '>',
-                to: to,
-                subject: subject,
-                html: `
-                            <div id=":p3" class="ii gt"
-  jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyIjbXNnLWY6MTgwNzU5MzM3MjQxNDI3OTU1OSIsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLDBd">
-  <div id=":p2" class="a3s aiL msg-5387884785609020660 adM">
-    <div class="HOEnZb">
-      <div class="adm">
-        <div id="q_4" class="ajR h4" data-tooltip="Masquer le contenu développé"
-          aria-label="Masquer le contenu développé" aria-expanded="true">
-          <div class="ajT"></div>
-        </div>
-      </div>
-      <div class="im"><u></u>
-        <div
-          style="font-family:Arial,sans-serif;line-height:1.6;color:#333;background-color:#f9f9f9;margin:0;padding:0">
-          <table cellpadding="0" cellspacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td>
-                  <div class="m_-5387884785609020660container"
-                    style="max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;background-color:#ffffff;box-sizing:border-box">
-                    <a href="https://devlly.net" target="_blank"
-                      data-saferedirecturl="https://www.google.com/url?q=https://devlly.net&amp;source=gmail&amp;ust=1723942146285000&amp;usg=AOvVaw3xNc1XysHTxCDvDbZthuc9">
-                      <div style="text-align:center;margin-bottom:20px">
-                        <img src="https://ci3.googleusercontent.com/meips/ADKq_NbyCwvOwsO9LYPLupNwWzZadrySm8Jpj_sbyw6MWQH4VKDletHagpIluJVhQmeDS22_r2p1=s0-d-e1-ft#https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" style="width:200px;max-width:100%;height:auto" width="200" height="auto" class="CToWUd" data-bit="iit">
-                      </div>
-                    </a>
-                    <h1 style="color:#16217c;font-size:24px;text-align:center">Your vision, our Code!</h1>
-                    <p>Bonjour,</p>
-                        <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
-                        <p>Nous avons également prévu une réunion pour discuter davantage de vos besoins. Rejoignez la réunion en utilisant le lien ci-dessous :</p>
-                        <p><strong>Date et Heure:</strong> ${meetingDate}</p>
-                        <a href='https://meet.google.com/uit-bvdy-zya' class="m_-5387884785609020660button"
-                        style="display:block;width:100%;padding:10px 20px;font-size:16px;color:white;background-color:#16217c;border-radius:20px;text-decoration:none;margin-top:20px;text-align:center;box-sizing:border-box">Rejoindre la réunion</a>
-                        <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
-                        <p>Cordialement,<br>L'équipe Devlly Agency</p>
-                    <div
-                      style="margin-top:30px;text-align:center;border-top:1px solid #ddd;padding-top:15px;color:#555;background-color:#f8f9fa;padding:20px;box-sizing:border-box">
-                      <div class="m_-5387884785609020660social-icons"
-                        style="margin-bottom:20px;display:flex;justify-content:center;text-align:center">
-                        <a href="https://www.facebook.com/profile.php?id=61553758615638&amp;locale=fr_FR"
-                          title="Facebook"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://www.facebook.com/profile.php?id%3D61553758615638%26locale%3Dfr_FR&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw24B9IdlRbTZOjTQJwP8AWe">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_NYSTMLpBvDH97naOwn6YFuvBduRGkYOr6Ppm4EGE5mNJqcsbxHMJmGAswf1TD2v8SwgnHMIXlXHjhUw2gGwuA=s0-d-e1-ft#https://i.postimg.cc/xjFShQFM/image-2.png" alt="Facebook" title="Facebook" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-                        <a href="https://www.instagram.com/devlly__/" title="Instagram"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://www.instagram.com/devlly__/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw3lnKZw_2TP5XbO5W562d32">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_Nbkb6kIifAsx57bQGo_H_CDP9aTHdoYprluDn75zs8RbWZYqJX0U1mppjM87Gana3IhhcvsBOyQAKMeBfV3Eg=s0-d-e1-ft#https://i.postimg.cc/j29076JZ/image-1.png" alt="Instagram" title="Instagram" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-
-                        <a href="https://www.linkedin.com/company/devlly/" title="LinkedIn"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://www.linkedin.com/company/devlly/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw1FF0sw_CbBNtkUgAPiqwPu">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_NYqCSH-6fPlZti3s7iUAtFoacx4CHqqIjsC7RExjMFN1_Yvkf3nRnoM57yhSZj4klAjDc5NJP-6vjNxHENRPg=s0-d-e1-ft#https://i.postimg.cc/63jFkVzt/image-3.png" alt="LinkedIn" title="LinkedIn" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-                        <a href="https://x.com/devlly__" title="X"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://x.com/devlly__&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw21UVJ-OSRn3M0BjLRWZPVE">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_NZ0BVA4gDFWn25oE2_DafZnvo23K8F4_oPya3mDaS0bao3NWkIetLcq_3Dk_ptjCquv5-HKreXFUdyZVYfGEw=s0-d-e1-ft#https://i.postimg.cc/XJ7T11fs/image-4.png" alt="X" title="X" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-
-
-                      </div>
-                      <div class="m_-5387884785609020660contact-info" style="margin-bottom:20px;font-size:16px">
-                        <a href="mailto:contact@devlly.net" style="text-decoration:none;color:#16217c" title="Email us"
-                          target="_blank">
-                          contact@devlly.net
-                        </a><br>
-                        <a href="tel:+213540323994" style="text-decoration:none;color:#16217c" title="Email us"
-                          target="_blank">
-                          +213540323994
-                        </a>
-                      </div>
-                      <div class="m_-5387884785609020660unsubscribe" style="font-size:10px">
-                        <p>Copyright © 2024 DEVLLY</p>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <img width="1px" height="1px" alt="" src="https://ci3.googleusercontent.com/meips/ADKq_NZqy3W1E-SgxGOB-zCvJhZrYlzXYwa1jwrRCoP2liZhSoUsVW0wgDv96sD7audDU6RU4bbD0dxENuvV6ENLGYF898rtAi8xG0s_Gkd5XX5cmFYRLziinyNqtHHj35PtrOSKmFlsJXlVUoB7WOaxTTQA25LeWcwS5QfsgKZLBYp4TrIGfyt7619VXsZqZKO9l5MhI-UN6_Yse5yiJggq7uphcud_w76FxzBIqiSUWlaRZ_iEDFWF2c7Dw1qN5RSPMefa3uFckTb38429zpwshUK_hYkzf6eFltYLOAU-7Q=s0-d-e1-ft#http://track.send.postdrop.io/o/eJwEwF0OgyAMAODTyCOpbaHlgcOUH6fJGEaWnX9fy0C7pOp63gVJQyAhd2Y-UgcMpBSRInBVoaTSBaJCKuyujIAMugsAYyB_FLUaick4MFfeGFb_NH_P9W3PvP013ZOtWFnmRz9t9Aa4MbyGXW9f53C_jP8AAAD__0fGJ8o" class="CToWUd" data-bit="iit">
-        </div>
-
-      </div>
+async function sendEmail(to, subject, text, pdfPath, isMeet, submissionId, date) {
+    const meetingDate = date;
+    const meetHTML = `
+                        <div id=":p3" class="ii gt"
+jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyIjbXNnLWY6MTgwNzU5MzM3MjQxNDI3OTU1OSIsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLDBd">
+<div id=":p2" class="a3s aiL msg-5387884785609020660 adM">
+<div class="HOEnZb">
+  <div class="adm">
+    <div id="q_4" class="ajR h4" data-tooltip="Masquer le contenu développé"
+      aria-label="Masquer le contenu développé" aria-expanded="true">
+      <div class="ajT"></div>
     </div>
   </div>
-</div>
-                `,
-            };
-        console.log("we sent a meeting email");
-    } else {
-        const paymentLink = `https://devlly.net/?fluent-form=4&submission_id=${submissionId}&email=${encodeURIComponent(to)}`;
+  <div class="im"><u></u>
+    <div
+      style="font-family:Arial,sans-serif;line-height:1.6;color:#333;background-color:#f9f9f9;margin:0;padding:0">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tbody>
+          <tr>
+            <td>
+              <div class="m_-5387884785609020660container"
+                style="max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;background-color:#ffffff;box-sizing:border-box">
+                <a href="https://devlly.net" target="_blank"
+                  data-saferedirecturl="https://www.google.com/url?q=https://devlly.net&amp;source=gmail&amp;ust=1723942146285000&amp;usg=AOvVaw3xNc1XysHTxCDvDbZthuc9">
+                  <div style="text-align:center;margin-bottom:20px">
+                    <img src="https://ci3.googleusercontent.com/meips/ADKq_NbyCwvOwsO9LYPLupNwWzZadrySm8Jpj_sbyw6MWQH4VKDletHagpIluJVhQmeDS22_r2p1=s0-d-e1-ft#https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" style="width:200px;max-width:100%;height:auto" width="200" height="auto" class="CToWUd" data-bit="iit">
+                  </div>
+                </a>
+                <h1 style="color:#16217c;font-size:24px;text-align:center">Your vision, our Code!</h1>
+                <p>Bonjour,</p>
+                    <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
+                    <p>Nous avons également prévu une réunion pour discuter davantage de vos besoins. Rejoignez la réunion en utilisant le lien ci-dessous :</p>
+                    <p><strong>Date et Heure:</strong> ${meetingDate}</p>
+                    <a href='https://meet.google.com/uit-bvdy-zya' class="m_-5387884785609020660button"
+                    style="display:block;width:100%;padding:10px 20px;font-size:16px;color:white;background-color:#16217c;border-radius:20px;text-decoration:none;margin-top:20px;text-align:center;box-sizing:border-box">Rejoindre la réunion</a>
+                    <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.</p>
+                    <p>Cordialement,<br>L'équipe Devlly Agency</p>
+                <div
+                  style="margin-top:30px;text-align:center;border-top:1px solid #ddd;padding-top:15px;color:#555;background-color:#f8f9fa;padding:20px;box-sizing:border-box">
+                  <div class="m_-5387884785609020660social-icons"
+                    style="margin-bottom:20px;display:flex;justify-content:center;text-align:center">
+                    <a href="https://www.facebook.com/profile.php?id=61553758615638&amp;locale=fr_FR"
+                      title="Facebook"
+                      style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                      target="_blank"
+                      data-saferedirecturl="https://www.google.com/url?q=https://www.facebook.com/profile.php?id%3D61553758615638%26locale%3Dfr_FR&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw24B9IdlRbTZOjTQJwP8AWe">
+                      <img src="https://ci3.googleusercontent.com/meips/ADKq_NYSTMLpBvDH97naOwn6YFuvBduRGkYOr6Ppm4EGE5mNJqcsbxHMJmGAswf1TD2v8SwgnHMIXlXHjhUw2gGwuA=s0-d-e1-ft#https://i.postimg.cc/xjFShQFM/image-2.png" alt="Facebook" title="Facebook" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                    </a>
+                    <a href="https://www.instagram.com/devlly__/" title="Instagram"
+                      style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                      target="_blank"
+                      data-saferedirecturl="https://www.google.com/url?q=https://www.instagram.com/devlly__/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw3lnKZw_2TP5XbO5W562d32">
+                      <img src="https://ci3.googleusercontent.com/meips/ADKq_Nbkb6kIifAsx57bQGo_H_CDP9aTHdoYprluDn75zs8RbWZYqJX0U1mppjM87Gana3IhhcvsBOyQAKMeBfV3Eg=s0-d-e1-ft#https://i.postimg.cc/j29076JZ/image-1.png" alt="Instagram" title="Instagram" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                    </a>
 
+                    <a href="https://www.linkedin.com/company/devlly/" title="LinkedIn"
+                      style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                      target="_blank"
+                      data-saferedirecturl="https://www.google.com/url?q=https://www.linkedin.com/company/devlly/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw1FF0sw_CbBNtkUgAPiqwPu">
+                      <img src="https://ci3.googleusercontent.com/meips/ADKq_NYqCSH-6fPlZti3s7iUAtFoacx4CHqqIjsC7RExjMFN1_Yvkf3nRnoM57yhSZj4klAjDc5NJP-6vjNxHENRPg=s0-d-e1-ft#https://i.postimg.cc/63jFkVzt/image-3.png" alt="LinkedIn" title="LinkedIn" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                    </a>
+                    <a href="https://x.com/devlly__" title="X"
+                      style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                      target="_blank"
+                      data-saferedirecturl="https://www.google.com/url?q=https://x.com/devlly__&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw21UVJ-OSRn3M0BjLRWZPVE">
+                      <img src="https://ci3.googleusercontent.com/meips/ADKq_NZ0BVA4gDFWn25oE2_DafZnvo23K8F4_oPya3mDaS0bao3NWkIetLcq_3Dk_ptjCquv5-HKreXFUdyZVYfGEw=s0-d-e1-ft#https://i.postimg.cc/XJ7T11fs/image-4.png" alt="X" title="X" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                    </a>
+
+
+                  </div>
+                  <div class="m_-5387884785609020660contact-info" style="margin-bottom:20px;font-size:16px">
+                    <a href="mailto:contact@devlly.net" style="text-decoration:none;color:#16217c" title="Email us"
+                      target="_blank">
+                      contact@devlly.net
+                    </a><br>
+                    <a href="tel:+213540323994" style="text-decoration:none;color:#16217c" title="Email us"
+                      target="_blank">
+                      +213540323994
+                    </a>
+                  </div>
+                  <div class="m_-5387884785609020660unsubscribe" style="font-size:10px">
+                    <p>Copyright © 2024 DEVLLY</p>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <img width="1px" height="1px" alt="" src="https://ci3.googleusercontent.com/meips/ADKq_NZqy3W1E-SgxGOB-zCvJhZrYlzXYwa1jwrRCoP2liZhSoUsVW0wgDv96sD7audDU6RU4bbD0dxENuvV6ENLGYF898rtAi8xG0s_Gkd5XX5cmFYRLziinyNqtHHj35PtrOSKmFlsJXlVUoB7WOaxTTQA25LeWcwS5QfsgKZLBYp4TrIGfyt7619VXsZqZKO9l5MhI-UN6_Yse5yiJggq7uphcud_w76FxzBIqiSUWlaRZ_iEDFWF2c7Dw1qN5RSPMefa3uFckTb38429zpwshUK_hYkzf6eFltYLOAU-7Q=s0-d-e1-ft#http://track.send.postdrop.io/o/eJwEwF0OgyAMAODTyCOpbaHlgcOUH6fJGEaWnX9fy0C7pOp63gVJQyAhd2Y-UgcMpBSRInBVoaTSBaJCKuyujIAMugsAYyB_FLUaick4MFfeGFb_NH_P9W3PvP013ZOtWFnmRz9t9Aa4MbyGXW9f53C_jP8AAAD__0fGJ8o" class="CToWUd" data-bit="iit">
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+            `
+    const paymentLink = `https://devlly.net/?fluent-form=4&submission_id=${submissionId}&email=${encodeURIComponent(to)}`;
+    const devisHTML = `
+        <div id=":p3" class="ii gt"
+      jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyIjbXNnLWY6MTgwNzU5MzM3MjQxNDI3OTU1OSIsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLDBd">
+      <div id=":p2" class="a3s aiL msg-5387884785609020660 adM">
+        <div class="HOEnZb">
+          <div class="adm">
+            <div id="q_4" class="ajR h4" data-tooltip="Masquer le contenu développé"
+              aria-label="Masquer le contenu développé" aria-expanded="true">
+              <div class="ajT"></div>
+            </div>
+          </div>
+          <div class="im"><u></u>
+            <div
+              style="font-family:Arial,sans-serif;line-height:1.6;color:#333;background-color:#f9f9f9;margin:0;padding:0">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="m_-5387884785609020660container"
+                        style="max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;background-color:#ffffff;box-sizing:border-box">
+                        <a href="https://devlly.net" target="_blank"
+                          data-saferedirecturl="https://www.google.com/url?q=https://devlly.net&amp;source=gmail&amp;ust=1723942146285000&amp;usg=AOvVaw3xNc1XysHTxCDvDbZthuc9">
+                          <div style="text-align:center;margin-bottom:20px">
+                            <img src="https://ci3.googleusercontent.com/meips/ADKq_NbyCwvOwsO9LYPLupNwWzZadrySm8Jpj_sbyw6MWQH4VKDletHagpIluJVhQmeDS22_r2p1=s0-d-e1-ft#https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" style="width:200px;max-width:100%;height:auto" width="200" height="auto" class="CToWUd" data-bit="iit">
+                          </div>
+                        </a>
+                        <h1 style="color:#16217c;font-size:24px;text-align:center">Your vision, our Code!</h1>
+                        <p>Bonjour,</p>
+                        <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous
+                          présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
+                        <p>Pour faciliter le processus, nous avons également inclus un lien où vous pouvez procéder au
+                          paiement directement si vous acceptez notre offre et les détails du contrat :</p>
+                        <a href='${paymentLink}' class="m_-5387884785609020660button"
+                          style="display:block;width:100%;padding:10px 20px;font-size:16px;color:white;background-color:#16217c;border-radius:20px;text-decoration:none;margin-top:20px;text-align:center;box-sizing:border-box">Effectuez
+                          votre paiement</a>
+                        <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous
+                          sommes là pour vous aider.</p>
+                        <p>Cordialement,<br>L'équipe Devlly Agency</p>
+    
+                        <div
+                          style="margin-top:30px;text-align:center;border-top:1px solid #ddd;padding-top:15px;color:#555;background-color:#f8f9fa;padding:20px;box-sizing:border-box">
+                          <div class="m_-5387884785609020660social-icons"
+                            style="margin-bottom:20px;display:flex;justify-content:center;text-align:center">
+                            <a href="https://www.facebook.com/profile.php?id=61553758615638&amp;locale=fr_FR"
+                              title="Facebook"
+                              style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                              target="_blank"
+                              data-saferedirecturl="https://www.google.com/url?q=https://www.facebook.com/profile.php?id%3D61553758615638%26locale%3Dfr_FR&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw24B9IdlRbTZOjTQJwP8AWe">
+                              <img src="https://ci3.googleusercontent.com/meips/ADKq_NYSTMLpBvDH97naOwn6YFuvBduRGkYOr6Ppm4EGE5mNJqcsbxHMJmGAswf1TD2v8SwgnHMIXlXHjhUw2gGwuA=s0-d-e1-ft#https://i.postimg.cc/xjFShQFM/image-2.png" alt="Facebook" title="Facebook" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                            </a>
+                            <a href="https://www.instagram.com/devlly__/" title="Instagram"
+                              style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                              target="_blank"
+                              data-saferedirecturl="https://www.google.com/url?q=https://www.instagram.com/devlly__/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw3lnKZw_2TP5XbO5W562d32">
+                              <img src="https://ci3.googleusercontent.com/meips/ADKq_Nbkb6kIifAsx57bQGo_H_CDP9aTHdoYprluDn75zs8RbWZYqJX0U1mppjM87Gana3IhhcvsBOyQAKMeBfV3Eg=s0-d-e1-ft#https://i.postimg.cc/j29076JZ/image-1.png" alt="Instagram" title="Instagram" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                            </a>
+    
+                            <a href="https://www.linkedin.com/company/devlly/" title="LinkedIn"
+                              style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                              target="_blank"
+                              data-saferedirecturl="https://www.google.com/url?q=https://www.linkedin.com/company/devlly/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw1FF0sw_CbBNtkUgAPiqwPu">
+                              <img src="https://ci3.googleusercontent.com/meips/ADKq_NYqCSH-6fPlZti3s7iUAtFoacx4CHqqIjsC7RExjMFN1_Yvkf3nRnoM57yhSZj4klAjDc5NJP-6vjNxHENRPg=s0-d-e1-ft#https://i.postimg.cc/63jFkVzt/image-3.png" alt="LinkedIn" title="LinkedIn" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                            </a>
+                            <a href="https://x.com/devlly__" title="X"
+                              style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
+                              target="_blank"
+                              data-saferedirecturl="https://www.google.com/url?q=https://x.com/devlly__&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw21UVJ-OSRn3M0BjLRWZPVE">
+                              <img src="https://ci3.googleusercontent.com/meips/ADKq_NZ0BVA4gDFWn25oE2_DafZnvo23K8F4_oPya3mDaS0bao3NWkIetLcq_3Dk_ptjCquv5-HKreXFUdyZVYfGEw=s0-d-e1-ft#https://i.postimg.cc/XJ7T11fs/image-4.png" alt="X" title="X" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
+                            </a>
+    
+    
+                          </div>
+                          <div class="m_-5387884785609020660contact-info" style="margin-bottom:20px;font-size:16px">
+                            <a href="mailto:contact@devlly.net" style="text-decoration:none;color:#16217c" title="Email us"
+                              target="_blank">
+                              contact@devlly.net
+                            </a><br>
+                            <a href="tel:+213540323994" style="text-decoration:none;color:#16217c" title="Email us"
+                              target="_blank">
+                              +213540323994
+                            </a>
+                          </div>
+                          <div class="m_-5387884785609020660unsubscribe" style="font-size:10px">
+                            <p>Copyright © 2024 DEVLLY</p>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <img width="1px" height="1px" alt="" src="https://ci3.googleusercontent.com/meips/ADKq_NZqy3W1E-SgxGOB-zCvJhZrYlzXYwa1jwrRCoP2liZhSoUsVW0wgDv96sD7audDU6RU4bbD0dxENuvV6ENLGYF898rtAi8xG0s_Gkd5XX5cmFYRLziinyNqtHHj35PtrOSKmFlsJXlVUoB7WOaxTTQA25LeWcwS5QfsgKZLBYp4TrIGfyt7619VXsZqZKO9l5MhI-UN6_Yse5yiJggq7uphcud_w76FxzBIqiSUWlaRZ_iEDFWF2c7Dw1qN5RSPMefa3uFckTb38429zpwshUK_hYkzf6eFltYLOAU-7Q=s0-d-e1-ft#http://track.send.postdrop.io/o/eJwEwF0OgyAMAODTyCOpbaHlgcOUH6fJGEaWnX9fy0C7pOp63gVJQyAhd2Y-UgcMpBSRInBVoaTSBaJCKuyujIAMugsAYyB_FLUaick4MFfeGFb_NH_P9W3PvP013ZOtWFnmRz9t9Aa4MbyGXW9f53C_jP8AAAD__0fGJ8o" class="CToWUd" data-bit="iit">
+            </div>
+    
+          </div>
+        </div>
+      </div>
+    </div>
+    
+            `
+
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.titan.email',
+        port: 587, // Use 465 for SSL if you want to set secure: true
+        secure: false, // Set to true if using port 465
+        auth: {
+            user: senderEmail,
+            pass: senderPassword,
+        },
+    });
+
+    let mailOptions;
+    console.log("ismeet = ", isMeet);
+    if (isMeet === "OK" || isMeet === "تمام") {
+        // Schedule the meeting for the next day at 4 PM
+       
         mailOptions = {
             from: '"Devlly Agency" <' + senderEmail + '>',
             to: to,
-            subject: subject,
-            html: `
-    <div id=":p3" class="ii gt"
-  jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyIjbXNnLWY6MTgwNzU5MzM3MjQxNDI3OTU1OSIsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLG51bGwsbnVsbCxudWxsLDBd">
-  <div id=":p2" class="a3s aiL msg-5387884785609020660 adM">
-    <div class="HOEnZb">
-      <div class="adm">
-        <div id="q_4" class="ajR h4" data-tooltip="Masquer le contenu développé"
-          aria-label="Masquer le contenu développé" aria-expanded="true">
-          <div class="ajT"></div>
-        </div>
-      </div>
-      <div class="im"><u></u>
-        <div
-          style="font-family:Arial,sans-serif;line-height:1.6;color:#333;background-color:#f9f9f9;margin:0;padding:0">
-          <table cellpadding="0" cellspacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td>
-                  <div class="m_-5387884785609020660container"
-                    style="max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;background-color:#ffffff;box-sizing:border-box">
-                    <a href="https://devlly.net" target="_blank"
-                      data-saferedirecturl="https://www.google.com/url?q=https://devlly.net&amp;source=gmail&amp;ust=1723942146285000&amp;usg=AOvVaw3xNc1XysHTxCDvDbZthuc9">
-                      <div style="text-align:center;margin-bottom:20px">
-                        <img src="https://ci3.googleusercontent.com/meips/ADKq_NbyCwvOwsO9LYPLupNwWzZadrySm8Jpj_sbyw6MWQH4VKDletHagpIluJVhQmeDS22_r2p1=s0-d-e1-ft#https://i.imgur.com/KHUlNrv.png" alt="Devlly Agency Logo" style="width:200px;max-width:100%;height:auto" width="200" height="auto" class="CToWUd" data-bit="iit">
-                      </div>
-                    </a>
-                    <h1 style="color:#16217c;font-size:24px;text-align:center">Your vision, our Code!</h1>
-                    <p>Bonjour,</p>
-                    <p>Merci d'avoir contacté Devlly Agency pour vos besoins en développement. Nous sommes ravis de vous
-                      présenter votre devis personnalisé en pièce jointe, ainsi que notre contrat de services.</p>
-                    <p>Pour faciliter le processus, nous avons également inclus un lien où vous pouvez procéder au
-                      paiement directement si vous acceptez notre offre et les détails du contrat :</p>
-                    <a href='${paymentLink}' class="m_-5387884785609020660button"
-                      style="display:block;width:100%;padding:10px 20px;font-size:16px;color:white;background-color:#16217c;border-radius:20px;text-decoration:none;margin-top:20px;text-align:center;box-sizing:border-box">Effectuez
-                      votre paiement</a>
-                    <p>Si vous avez des questions ou des besoins supplémentaires, n'hésitez pas à nous contacter. Nous
-                      sommes là pour vous aider.</p>
-                    <p>Cordialement,<br>L'équipe Devlly Agency</p>
-
-                    <div
-                      style="margin-top:30px;text-align:center;border-top:1px solid #ddd;padding-top:15px;color:#555;background-color:#f8f9fa;padding:20px;box-sizing:border-box">
-                      <div class="m_-5387884785609020660social-icons"
-                        style="margin-bottom:20px;display:flex;justify-content:center;text-align:center">
-                        <a href="https://www.facebook.com/profile.php?id=61553758615638&amp;locale=fr_FR"
-                          title="Facebook"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://www.facebook.com/profile.php?id%3D61553758615638%26locale%3Dfr_FR&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw24B9IdlRbTZOjTQJwP8AWe">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_NYSTMLpBvDH97naOwn6YFuvBduRGkYOr6Ppm4EGE5mNJqcsbxHMJmGAswf1TD2v8SwgnHMIXlXHjhUw2gGwuA=s0-d-e1-ft#https://i.postimg.cc/xjFShQFM/image-2.png" alt="Facebook" title="Facebook" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-                        <a href="https://www.instagram.com/devlly__/" title="Instagram"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://www.instagram.com/devlly__/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw3lnKZw_2TP5XbO5W562d32">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_Nbkb6kIifAsx57bQGo_H_CDP9aTHdoYprluDn75zs8RbWZYqJX0U1mppjM87Gana3IhhcvsBOyQAKMeBfV3Eg=s0-d-e1-ft#https://i.postimg.cc/j29076JZ/image-1.png" alt="Instagram" title="Instagram" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-
-                        <a href="https://www.linkedin.com/company/devlly/" title="LinkedIn"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://www.linkedin.com/company/devlly/&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw1FF0sw_CbBNtkUgAPiqwPu">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_NYqCSH-6fPlZti3s7iUAtFoacx4CHqqIjsC7RExjMFN1_Yvkf3nRnoM57yhSZj4klAjDc5NJP-6vjNxHENRPg=s0-d-e1-ft#https://i.postimg.cc/63jFkVzt/image-3.png" alt="LinkedIn" title="LinkedIn" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-                        <a href="https://x.com/devlly__" title="X"
-                          style="display:inline-block;margin:0 10px;text-decoration:none;font-size:24px;color:#16217c"
-                          target="_blank"
-                          data-saferedirecturl="https://www.google.com/url?q=https://x.com/devlly__&amp;source=gmail&amp;ust=1723942146286000&amp;usg=AOvVaw21UVJ-OSRn3M0BjLRWZPVE">
-                          <img src="https://ci3.googleusercontent.com/meips/ADKq_NZ0BVA4gDFWn25oE2_DafZnvo23K8F4_oPya3mDaS0bao3NWkIetLcq_3Dk_ptjCquv5-HKreXFUdyZVYfGEw=s0-d-e1-ft#https://i.postimg.cc/XJ7T11fs/image-4.png" alt="X" title="X" width="32" style="outline:none;text-decoration:none;clear:both;display:block!important;border:none;height:auto;float:none;max-width:32px!important" class="CToWUd" data-bit="iit">
-                        </a>
-
-
-                      </div>
-                      <div class="m_-5387884785609020660contact-info" style="margin-bottom:20px;font-size:16px">
-                        <a href="mailto:contact@devlly.net" style="text-decoration:none;color:#16217c" title="Email us"
-                          target="_blank">
-                          contact@devlly.net
-                        </a><br>
-                        <a href="tel:+213540323994" style="text-decoration:none;color:#16217c" title="Email us"
-                          target="_blank">
-                          +213540323994
-                        </a>
-                      </div>
-                      <div class="m_-5387884785609020660unsubscribe" style="font-size:10px">
-                        <p>Copyright © 2024 DEVLLY</p>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <img width="1px" height="1px" alt="" src="https://ci3.googleusercontent.com/meips/ADKq_NZqy3W1E-SgxGOB-zCvJhZrYlzXYwa1jwrRCoP2liZhSoUsVW0wgDv96sD7audDU6RU4bbD0dxENuvV6ENLGYF898rtAi8xG0s_Gkd5XX5cmFYRLziinyNqtHHj35PtrOSKmFlsJXlVUoB7WOaxTTQA25LeWcwS5QfsgKZLBYp4TrIGfyt7619VXsZqZKO9l5MhI-UN6_Yse5yiJggq7uphcud_w76FxzBIqiSUWlaRZ_iEDFWF2c7Dw1qN5RSPMefa3uFckTb38429zpwshUK_hYkzf6eFltYLOAU-7Q=s0-d-e1-ft#http://track.send.postdrop.io/o/eJwEwF0OgyAMAODTyCOpbaHlgcOUH6fJGEaWnX9fy0C7pOp63gVJQyAhd2Y-UgcMpBSRInBVoaTSBaJCKuyujIAMugsAYyB_FLUaick4MFfeGFb_NH_P9W3PvP013ZOtWFnmRz9t9Aa4MbyGXW9f53C_jP8AAAD__0fGJ8o" class="CToWUd" data-bit="iit">
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-            `,
+            subject: submissionId, // Use submissionId as the email subject
+            html: meetHTML,
+        };
+        console.log("we sent a meeting email");
+    } else {
+      
+        mailOptions = {
+            from: '"Devlly Agency" <' + senderEmail + '>',
+            to: to,
+            subject: submissionId, // Use submissionId as the email subject
+            html: devisHTML,
             attachments: [
                 {
                     filename: "Votre Devis.pdf",
@@ -770,8 +770,41 @@ const senderPassword = 'Devlly00@'; // Your Titan password
                     return;
                 }
 
-                // Create the email message as MIMEText
-                const emailMessage = `From: ${senderEmail}\r\nTo: ${to}\r\nSubject: ${subject}\r\n\r\n${text}`;
+                // Create the email message as MIME format
+                let rawEmail = [
+                    `From: "Devlly Agency" <${senderEmail}>`,
+                    `To: "${submissionId}" <${to}>`,
+                    `Subject: ${submissionId}`,
+                    'MIME-Version: 1.0',
+                    'Content-Type: multipart/mixed; boundary="boundary"',
+                    '',
+                    '--boundary',
+                    'Content-Type: text/html; charset=utf-8',
+                    'Content-Transfer-Encoding: 7bit',
+                    '',
+                    meetHTML, // If this was the meeting email, use `meetHTML`, otherwise use `devisHTML`
+                    '--boundary',
+                ];
+
+                // Attach files if it's not a meeting email
+                if (mailOptions.attachments) {
+                    for (const attachment of mailOptions.attachments) {
+                        const attachmentData = require('fs').readFileSync(attachment.path).toString('base64');
+                        rawEmail.push(
+                            `Content-Type: ${attachment.filename.endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream'}; name="${attachment.filename}"`,
+                            'Content-Transfer-Encoding: base64',
+                            `Content-Disposition: attachment; filename="${attachment.filename}"`,
+                            '',
+                            attachmentData,
+                            '--boundary'
+                        );
+                    }
+                }
+
+                rawEmail.push('--boundary--', '');
+
+                // Convert the rawEmail array to a single string
+                const emailMessage = rawEmail.join('\r\n');
 
                 // Append the sent email to the "Sent" folder
                 imap.append(emailMessage, { mailbox: 'Sent' }, (appendErr) => {
@@ -794,3 +827,6 @@ const senderPassword = 'Devlly00@'; // Your Titan password
         console.error('Error sending email:', error);
     }
 }
+
+
+
