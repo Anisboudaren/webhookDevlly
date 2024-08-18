@@ -774,7 +774,7 @@ jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyI
                 let rawEmail = [
                     `From: "Devlly Agency" <${senderEmail}>`,
                     `To: "${submissionId}" <${to}>`,
-                    `Subject: ${submissionId}`,
+                    `Subject: ${subject}`,
                     'MIME-Version: 1.0',
                     'Content-Type: multipart/mixed; boundary="boundary"',
                     '',
