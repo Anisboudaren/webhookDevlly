@@ -717,13 +717,11 @@ jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyI
 
     let mailOptions;
     console.log("ismeet = ", isMeet);
-    if (isMeet === "OK" || isMeet === "تمام") {
-        // Schedule the meeting for the next day at 4 PM
-       
+    if (isMeet === "OK" || isMeet === "تمام") { 
         mailOptions = {
             from: '"Devlly Agency" <' + senderEmail + '>',
             to: to,
-            subject: submissionId, // Use submissionId as the email subject
+            subject: subject, 
             html: meetHTML,
         };
         console.log("we sent a meeting email");
@@ -732,7 +730,7 @@ jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyI
         mailOptions = {
             from: '"Devlly Agency" <' + senderEmail + '>',
             to: to,
-            subject: submissionId, // Use submissionId as the email subject
+            subject: subject, 
             html: devisHTML,
             attachments: [
                 {
@@ -769,7 +767,7 @@ jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyI
                     imap.end();
                     return;
                 }
-
+                const temp = (isMeet === "OK" || isMeet === "تمام") ? meetHTML : devisHTML ;
                 // Create the email message as MIME format
                 let rawEmail = [
                     `From: "Devlly Agency" <${senderEmail}>`,
@@ -782,7 +780,7 @@ jslog="20277; u014N:xr6bB; 1:WyIjdGhyZWFkLWY6MTgwNzU4OTY2MTk3NDgxNTY5OSJd; 4:WyI
                     'Content-Type: text/html; charset=utf-8',
                     'Content-Transfer-Encoding: 7bit',
                     '',
-                    meetHTML, // If this was the meeting email, use `meetHTML`, otherwise use `devisHTML`
+                    temp, // If this was the meeting email, use `meetHTML`, otherwise use `devisHTML`
                     '--boundary',
                 ];
 
